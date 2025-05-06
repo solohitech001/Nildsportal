@@ -87,4 +87,47 @@ router.post(
   }
 );
 
+router.post('/application', async (req, res) => {
+  console.log("Incomming")
+  try {
+    const {
+      email, // used to find the user
+      userData,
+      userProgram,
+      userHomeAddress,
+      userContactAddress,
+      userQualification,
+      userEmploymentHistory,
+      userDisabilities,
+      status
+    } = req.body;
+ console.log(email)
+    // Find existing user by email
+    let user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update user application fields
+    user.userData = userData;
+    user.userProgram = userProgram;
+    user.userHomeAddress = userHomeAddress;
+    user.userContactAddress = userContactAddress;
+    user.userQualification = userQualification;
+    user.userEmploymentHistory = userEmploymentHistory;
+    user.userDisabilities = userDisabilities;
+    user.status = status
+
+    await user.save();
+
+    res.status(200).json({ message: 'Application saved successfully', user });
+    console.log(user)
+  } catch (error) {
+    console.error('Application save error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 export default router;
